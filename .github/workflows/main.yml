@@ -1,0 +1,13 @@
+on: [push]
+
+jobs:
+  test_socialism:
+    runs-on: ubuntu-latest
+    name: test_socialism
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Testing step
+        uses: ./ 
+        id: test
+
