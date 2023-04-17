@@ -10,4 +10,4 @@ outputs:
     description: 'The networks that have been updated'
 runs:
   using: 'node16'
-  main: 'index.js'
+  main: 'dist/index.js'
