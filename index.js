@@ -2,8 +2,7 @@ const core = require('@actions/core');
 const exec = require('@actions/exec');
 
 try {
-  	const commit = core.getInput('commit-prefix', { required: true });
-	console.log(commit);
+  	const commit = core.getInput('commit-prefix');
 	execute();
 	core.setOutput('updates', "network");
 } catch (error) {
