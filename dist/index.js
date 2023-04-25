@@ -4099,7 +4099,6 @@ try {
 }
 
 async function execute() {
-	console.log(commit);
 	await exec.exec('git log');
 }
 
