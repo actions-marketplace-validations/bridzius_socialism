@@ -1726,6 +1726,10 @@ function checkBypass(reqUrl) {
     if (!reqUrl.hostname) {
         return false;
     }
+    const reqHost = reqUrl.hostname;
+    if (isLoopbackAddress(reqHost)) {
+        return true;
+    }
     const noProxy = process.env['no_proxy'] || process.env['NO_PROXY'] || '';
     if (!noProxy) {
         return false;
@@ -1751,13 +1755,24 @@ function checkBypass(reqUrl) {
         .split(',')
         .map(x => x.trim().toUpperCase())
         .filter(x => x)) {
-        if (upperReqHosts.some(x => x === upperNoProxyItem)) {
+        if (upperNoProxyItem === '*' ||
+            upperReqHosts.some(x => x === upperNoProxyItem ||
+                x.endsWith(`.${upperNoProxyItem}`) ||
+                (upperNoProxyItem.startsWith('.') &&
+                    x.endsWith(`${upperNoProxyItem}`)))) {
             return true;
         }
     }
     return false;
 }
 exports.checkBypass = checkBypass;
+function isLoopbackAddress(host) {
+    const hostLower = host.toLowerCase();
+    return (hostLower === 'localhost' ||
+        hostLower.startsWith('127.') ||
+        hostLower.startsWith('[::1]') ||
+        hostLower.startsWith('[0:0:0:0:0:0:0:1]'));
+}
 //# sourceMappingURL=proxy.js.map
 
 /***/ }),
@@ -2688,6 +2703,14 @@ exports["default"] = _default;
 
 /***/ }),
 
+/***/ 290:
+/***/ ((module) => {
+
+module.exports = eval("require")("@actions/exec");
+
+
+/***/ }),
+
 /***/ 491:
 /***/ ((module) => {
 
@@ -2818,13 +2841,19 @@ var __webpack_exports__ = {};
 // This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
 (() => {
 const core = __nccwpck_require__(186);
+const exec = __nccwpck_require__(290);
 
 try {
   	const commit = core.getInput('commit-prefix', { required: true });
-	console.log(commit);
+	execute();
 	core.setOutput('updates', "network");
 } catch (error) {
   	core.setFailed(error.message);
+}
+
+async function execute() {
+	console.log(commit);
+	await exec.exec('git log');
 }
 
 })();

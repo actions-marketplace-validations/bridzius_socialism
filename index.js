@@ -1,9 +1,15 @@
 const core = require('@actions/core');
+const exec = require('@actions/exec');
 
 try {
   	const commit = core.getInput('commit-prefix', { required: true });
-	console.log(commit);
+	execute();
 	core.setOutput('updates', "network");
 } catch (error) {
   	core.setFailed(error.message);
+}
+
+async function execute() {
+	console.log(commit);
+	await exec.exec('git log');
 }
