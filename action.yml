@@ -1,8 +1,8 @@
 name: 'Socialism'
 description: 'Update your social network feed based on git commit messages'
 inputs:
-  commit-prefix:  
-    description: 'Commit prefix that will trigger the feed'
+  prefix:  
+    description: 'Commit body prefix that will trigger the feed'
     required: true
     default: 'post:'
 outputs:
