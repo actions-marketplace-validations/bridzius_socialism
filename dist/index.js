@@ -3934,6 +3934,49 @@ exports["default"] = _default;
 
 /***/ }),
 
+/***/ 499:
+/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
+
+const core = __nccwpck_require__(186);
+const exec = __nccwpck_require__(514);
+
+async function readCommit() {
+	let log = '';
+	const listeners = {
+		stdout: (data) => {
+			log += data.toString();
+		}
+	}
+	await exec.exec(
+		'git log', ['-1', '--no-merges', '--format="%b"'], 
+		{ listeners }
+	);
+	return log;
+}
+
+async function run() {
+	try {
+  		const prefix = core.getInput('prefix', { required: true });
+		const raw_body = await readCommit();
+		const read_commit = raw_body.trimEnd();
+		const matcher = new RegExp(`(?<=${prefix}).*`);
+		const post = read_commit.match(matcher);
+		if(post !== null) {
+			core.setOutput('post', post[0].trimStart());
+		}
+	} catch (error) {
+  		core.setFailed(error.message);
+	}
+}
+
+
+module.exports = {
+	run
+};
+
+
+/***/ }),
+
 /***/ 491:
 /***/ ((module) => {
 
@@ -4087,39 +4130,9 @@ module.exports = require("util");
 var __webpack_exports__ = {};
 // This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
 (() => {
-const core = __nccwpck_require__(186);
-const exec = __nccwpck_require__(514);
+const { run } = __nccwpck_require__(499);
 
-try {
-	action();
-} catch (error) {
-  	core.setFailed(error.message);
-}
-
-async function action() {
-  	const prefix = core.getInput('prefix', { required: true });
-	const raw_body = await readCommit();
-	const read_commit = raw_body.trimEnd();
-	const matcher = new RegExp(`(?<=${prefix}).*`);
-	const post = read_commit.match(matcher);
-	if(post !== null) {
-		core.setOutput('post', post[0].trimStart());
-	}
-}
-
-async function readCommit() {
-	let log = '';
-	const listeners = {
-		stdout: (data) => {
-			log += data.toString();
-		}
-	}
-	await exec.exec(
-		'git log', ['-1', '--no-merges', '--format="%b"'], 
-		{ listeners }
-	);
-	return log;
-}
+run();
 
 })();
 
