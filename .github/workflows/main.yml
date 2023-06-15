@@ -7,7 +7,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18.x"
       - name: Testing step
-        uses: ./ 
+        uses: ./
         id: test
-
