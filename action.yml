@@ -9,5 +9,5 @@ outputs:
   updates:
     description: "The networks that have been updated"
 runs:
-  using: "node20"
+  using: "node16"
   main: "dist/index.js"
