@@ -1,13 +1,13 @@
-name: 'Socialism'
-description: 'Update your social network feed based on git commit messages'
+name: "Socialism"
+description: "Update your social network feed based on git commit messages"
 inputs:
-  prefix:  
-    description: 'Commit body prefix that will trigger the feed'
+  prefix:
+    description: "Commit body prefix that will trigger the feed"
     required: true
-    default: 'post:'
+    default: "post:"
 outputs:
-  updates: 
-    description: 'The networks that have been updated'
+  updates:
+    description: "The networks that have been updated"
 runs:
-  using: 'node16'
-  main: 'dist/index.js'
+  using: "node20"
+  main: "dist/index.js"
