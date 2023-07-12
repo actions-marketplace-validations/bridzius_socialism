@@ -1,10 +1,11 @@
 const { request } = require("node:https");
+const { env } = require("node:process");
 
 module.exports = {
     post: (status, url) => {
-        const req = request(platforms.mastodon(url), { method: 'POST', headers: { 'Authorization': `Bearer ${TOKEN}`, 'Content-Type': 'application/json' } }, (res) => {
+        const req = request(platforms.mastodon(url), { method: 'POST', headers: { 'Authorization': `Bearer ${env.MASTODON_TOKEN}`, 'Content-Type': 'application/json' } }, (res) => {
             res.on('data', (chunk) => {
-                console.log(`BODY: ${chunk.toString()}`);
+                console.log(`BODY:`, JSON.parse(chunk));
             });
             res.on('end', () => {
                 console.log('No more data in response.');

@@ -1,5 +1,7 @@
 const core = require('@actions/core');
 const exec = require('@actions/exec');
+const { env } = require('node:process');
+const { post } = require('./post');
 
 async function readCommit() {
 	let log = '';
@@ -9,7 +11,7 @@ async function readCommit() {
 		}
 	}
 	await exec.exec(
-		'git log', ['-1', '--no-merges', '--format="%b"'], 
+		'git log', ['-1', '--no-merges', '--format="%b"'],
 		{ listeners }
 	);
 	return log;
@@ -17,16 +19,18 @@ async function readCommit() {
 
 async function run() {
 	try {
-  		const prefix = core.getInput('prefix', { required: true });
+		const mastodon_url = env.MASTODON_URL;
+		const prefix = core.getInput('prefix', { required: true });
 		const raw_body = await readCommit();
 		const read_commit = raw_body.trimEnd();
 		const matcher = new RegExp(`(?<=${prefix}).*`);
-		const post = read_commit.match(matcher);
-		if(post !== null) {
-			core.setOutput('post', post[0].trimStart());
+		const message = read_commit.match(matcher);
+		if (message !== null) {
+			post(message, mastodon_url);
+			core.setOutput('message', message[0].trimStart());
 		}
 	} catch (error) {
-  		core.setFailed(error.message);
+		core.setFailed(error.message);
 	}
 }
 

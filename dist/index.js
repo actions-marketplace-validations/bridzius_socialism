@@ -3934,11 +3934,41 @@ exports["default"] = _default;
 
 /***/ }),
 
+/***/ 692:
+/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
+
+const { request } = __nccwpck_require__(286);
+const { env } = __nccwpck_require__(742);
+
+module.exports = {
+    post: (status, url) => {
+        const req = request(platforms.mastodon(url), { method: 'POST', headers: { 'Authorization': `Bearer ${env.MASTODON_TOKEN}`, 'Content-Type': 'application/json' } }, (res) => {
+            res.on('data', (chunk) => {
+                console.log(`BODY:`, JSON.parse(chunk));
+            });
+            res.on('end', () => {
+                console.log('No more data in response.');
+            });
+        });
+        req.write(JSON.stringify({ status }));
+        console.log("Sending", req);
+        req.end();
+    }
+}
+
+const platforms = {
+    mastodon: (url) => `${url}/api/v1/statuses`
+}
+
+/***/ }),
+
 /***/ 499:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
 const core = __nccwpck_require__(186);
 const exec = __nccwpck_require__(514);
+const { env } = __nccwpck_require__(742);
+const { post } = __nccwpck_require__(692);
 
 async function readCommit() {
 	let log = '';
@@ -3948,7 +3978,7 @@ async function readCommit() {
 		}
 	}
 	await exec.exec(
-		'git log', ['-1', '--no-merges', '--format="%b"'], 
+		'git log', ['-1', '--no-merges', '--format="%b"'],
 		{ listeners }
 	);
 	return log;
@@ -3956,16 +3986,18 @@ async function readCommit() {
 
 async function run() {
 	try {
-  		const prefix = core.getInput('prefix', { required: true });
+		const mastodon_url = env.MASTODON_URL;
+		const prefix = core.getInput('prefix', { required: true });
 		const raw_body = await readCommit();
 		const read_commit = raw_body.trimEnd();
 		const matcher = new RegExp(`(?<=${prefix}).*`);
-		const post = read_commit.match(matcher);
-		if(post !== null) {
-			core.setOutput('post', post[0].trimStart());
+		const message = read_commit.match(matcher);
+		if (message !== null) {
+			post(message, mastodon_url);
+			core.setOutput('message', message[0].trimStart());
 		}
 	} catch (error) {
-  		core.setFailed(error.message);
+		core.setFailed(error.message);
 	}
 }
 
@@ -4038,6 +4070,22 @@ module.exports = require("https");
 
 "use strict";
 module.exports = require("net");
+
+/***/ }),
+
+/***/ 286:
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("node:https");
+
+/***/ }),
+
+/***/ 742:
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("node:process");
 
 /***/ }),
 
