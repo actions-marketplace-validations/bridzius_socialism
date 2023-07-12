@@ -15,3 +15,10 @@ jobs:
         run: npm ci
       - name: Run tests
         run: npm test
+      - name: Post update
+        uses: bridzius/socialism@main
+        with:
+          prefix: "post"
+        env:
+          MASTODON_TOKEN: "{{secrets.MASTODON_TOKEN}}"
+          MASTODON_URL: "https://mastodon.social"
