@@ -1,4 +1,4 @@
-name: "Socialism"
+name: "bridzius/socialism"
 description: "Update your social network feed based on git commit messages"
 inputs:
   prefix:
