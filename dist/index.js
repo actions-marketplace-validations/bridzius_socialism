@@ -3990,17 +3990,19 @@ async function run() {
 		const raw_body = await readCommit();
 		const read_commit = raw_body.trimEnd();
 		const matcher = new RegExp(`(?<=${prefix}).*`);
-		const message = read_commit.match(matcher);
-		core.debug(`Sent message: "${message}" to url ${mastodon_url}`);
-		if (message !== null) {
-			const response = await post(message[0].trim(), mastodon_url);
-			core.debug(`Success response: ${JSON.stringify(response)}`);
+		const raw_message = read_commit.match(matcher);
+		core.debug(raw_message !== null ? `Found message` : `No message found with "${prefix}"`);
+		if (raw_message !== null) {
+			const message = raw_message[0].trim();
+			core.debug(`Sending "${message}"`);
+			const response = await post(message, mastodon_url);
+			core.debug(`Success response: ${JSON.parse(response)}`);
 			core.notice(`Message posted: "${message}`)
 		} else {
 			core.notice(`No update posted`);
 		}
 	} catch (error) {
-		core.debug(`error: ${JSON.stringify(error)}`)
+		core.debug(`error: ${JSON.parse(error)}`)
 		core.setFailed(error.message);
 	}
 }
