@@ -21,4 +21,4 @@ jobs:
           prefix: "post:"
         env:
           MASTODON_TOKEN: ${{ secrets.MASTODON_TOKEN }}
-          MASTODON_URL: https://mastodon.social
+          MASTODON_URL: https://fosstodon.org
