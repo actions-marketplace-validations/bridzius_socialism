@@ -3941,18 +3941,17 @@ const { request } = __nccwpck_require__(286);
 const { env } = __nccwpck_require__(742);
 
 module.exports = {
-    post: (status, url) => {
-        const req = request(platforms.mastodon(url), { method: 'POST', headers: { 'Authorization': `Bearer ${env.MASTODON_TOKEN}`, 'Content-Type': 'application/json' } }, (res) => {
-            res.on('data', (chunk) => {
-                console.log(`BODY:`, JSON.parse(chunk));
+    post: async (status, url) => {
+        return new Promise((resolve, reject) => {
+            const req = request(platforms.mastodon(url), { method: 'POST', headers: { 'Authorization': `Bearer ${env.MASTODON_TOKEN}`, 'Content-Type': 'application/json' } }, (res) => {
+                let response = '';
+                res.on('data', (data) => response += data.toString());
+                res.on('end', () => resolve(response));
+                res.on('error', (error) => reject(error));
             });
-            res.on('end', () => {
-                console.log('No more data in response.');
-            });
-        });
-        req.write(JSON.stringify({ status }));
-        console.log("Sending", req);
-        req.end();
+            req.write(JSON.stringify({ status }));
+            req.end();
+        })
     }
 }
 
@@ -3993,7 +3992,7 @@ async function run() {
 		const matcher = new RegExp(`(?<=${prefix}).*`);
 		const message = read_commit.match(matcher);
 		if (message !== null) {
-			post(message[0].trim(), mastodon_url);
+			await post(message[0].trim(), mastodon_url);
 			core.setOutput('message', message[0].trim());
 		}
 	} catch (error) {

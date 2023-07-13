@@ -26,7 +26,7 @@ async function run() {
 		const matcher = new RegExp(`(?<=${prefix}).*`);
 		const message = read_commit.match(matcher);
 		if (message !== null) {
-			post(message[0].trim(), mastodon_url);
+			await post(message[0].trim(), mastodon_url);
 			core.setOutput('message', message[0].trim());
 		}
 	} catch (error) {
