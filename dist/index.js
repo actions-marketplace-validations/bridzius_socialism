@@ -3991,11 +3991,16 @@ async function run() {
 		const read_commit = raw_body.trimEnd();
 		const matcher = new RegExp(`(?<=${prefix}).*`);
 		const message = read_commit.match(matcher);
+		core.debug(`Sent message: "${message}" to url ${mastodon_url}`);
 		if (message !== null) {
-			await post(message[0].trim(), mastodon_url);
-			core.setOutput('message', message[0].trim());
+			const response = await post(message[0].trim(), mastodon_url);
+			core.debug(`Success response: ${JSON.stringify(response)}`);
+			core.notice(`Message posted: "${message}`)
+		} else {
+			core.notice(`No update posted`);
 		}
 	} catch (error) {
+		core.debug(`error: ${JSON.stringify(error)}`)
 		core.setFailed(error.message);
 	}
 }
