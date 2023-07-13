@@ -30,13 +30,13 @@ async function run() {
 			const message = raw_message[0].trim();
 			core.debug(`Sending "${message}"`);
 			const response = await post(message, mastodon_url);
-			core.debug(`Success response: ${JSON.parse(response)}`);
+			core.debug(`Success response: ${JSON.stringify(response, null, '\t')}`);
 			core.notice(`Message posted: "${message}`)
 		} else {
 			core.notice(`No update posted`);
 		}
 	} catch (error) {
-		core.debug(`error: ${JSON.parse(error)}`)
+		core.debug(`error: ${JSON.stringify(error, null, '\t')}`);
 		core.setFailed(error.message);
 	}
 }

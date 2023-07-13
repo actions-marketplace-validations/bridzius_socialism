@@ -21,11 +21,12 @@ afterEach(() => {
 
 
 test('throw error on bad prefix', () => {
-	const error_message = 'Input required and not supplied: prefix';
+	const thrown_error = { message: 'Input required and not supplied: prefix' };
 	sandbox.restore();
 	const error = sandbox.replace(core, 'setFailed', sinon.fake());
 	run();
-	assert.equal(error.firstArg, error_message);
+	console.log((error));
+	assert.equal(error.firstArg, thrown_error.message);
 });
 
 test('get the required prefix input', () => {
